@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Primal Pursuit Trivia</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #111;
+      border-radius: 16px;
+      padding: 24px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #00e5ff;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+
+    .question {
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+
+    .answers button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #222;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 15px;
+    }
+
+    .answers button:hover {
+      background: #00e5ff;
+      color: #000;
+    }
+
+    .answers button.correct {
+      background: #4caf50;
+      color: #000;
+    }
+
+    .answers button.wrong {
+      background: #f44336;
+      color: #000;
+    }
+
+    .footer {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .next {
+      background: #00e5ff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .next:hover {
+      background: #7df9ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Primal Pursuit</h1>
+    <div class="subtitle">Trivia Challenge</div>
+
+    <div class="question" id="question">Loading question…</div>
+
+    <div class="answers" id="answers"></div>
+
+    <div class="footer">
+      <div id="score">Score: 0</div>
+      <button class="next" id="nextBtn" onclick="nextQuestion()" disabled>Next</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "What type of creatures are featured in Primal Pursuit?",
+        a: ["Aliens", "Dinosaurs", "Robots", "Dragons"],
+        correct: 1
+      },
+      {
+        q: "Which vehicle type is most iconic in Primal Pursuit?",
+        a: ["Bicycles", "Boats", "Hypercars", "Helicopters"],
+        correct: 2
+      },
+      {
+        q: "What makes Primal Pursuit unique?",
+        a: ["Puzzle-only gameplay", "Turn-based combat", "Fast vehicles and prehistoric threats", "Farming mechanics"],
+        correct: 2
+      },
+      {
+        q: "Which enemy would you expect to face?",
+        a: ["Zombie knights", "Mecha dinosaurs", "Space pirates", "Snow monsters"],
+        correct: 1
+      },
+      {
+        q: "What skill matters most in Primal Pursuit?",
+        a: ["Quick reflexes", "Spelling", "Cooking", "Memory matching"],
+        correct: 0
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let locked = false;
+
+    const questionEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const scoreEl = document.getElementById("score");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function loadQuestion() {
+      locked = false;
+      nextBtn.disabled = true;
+      answersEl.innerHTML = "";
+      const q = questions[current];
+      questionEl.textContent = q.q;
+
+      q.a.forEach((text, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = text;
+        btn.onclick = () => selectAnswer(btn, index);
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(button, index) {
+      if (locked) return;
+      locked = true;
+      const correctIndex = questions[current].correct;
+
+      const buttons = answersEl.querySelectorAll("button");
+      buttons.forEach((btn, i) => {
+        if (i === correctIndex) btn.classList.add("correct");
+        if (i === index && i !== correctIndex) btn.classList.add("wrong");
+        btn.disabled = true;
+      });
+
+      if (index === correctIndex) {
+        score++;
+        scoreEl.textContent = `Score: ${score}`;
+      }
+
+      nextBtn.disabled = false;
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current >= questions.length) {
+        questionEl.textContent = "Game Over!";
+        answersEl.innerHTML = `<p>You scored ${score} / ${questions.length}</p>`;
+        nextBtn.disabled = true;
+      } else {
+        loadQuestion();
+      }
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
